@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Prime University 65th-E CSE Group-B — Portal</title>
+  <!-- Fonts + Icons + Chart.js -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a2d9b6b2f3.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --bg:#030617; --card:#071226; --glass: rgba(255,255,255,0.03);
+      --accent1:#6d28d9; --accent2:#06b6d4; --muted:#94a3b8; --radius:14px;
+      font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:radial-gradient(1200px 600px at 10% 10%, #081022 0%, #030617 40%, #00040a 100%);color:#e6eef6}
+    .app{display:flex;gap:22px;min-height:100vh;padding:22px;max-width:1200px;margin:0 auto}
+
+    /* SIDEBAR */
+    .sidebar{width:280px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:16px;box-shadow:0 12px 40px rgba(2,6,23,0.6)}
+    .logo-box{display:flex;gap:12px;align-items:center;margin-bottom:12px}
+    .logo-box img{width:64px;height:64px;border-radius:12px;object-fit:cover;box-shadow:0 8px 30px rgba(109,40,217,0.12)}
+    .brand-title{font-weight:800;line-height:1}
+    .brand-title span{display:block;font-weight:600;color:var(--muted);font-size:13px}
+
+    .profile{display:flex;gap:12px;align-items:center;padding:10px;border-radius:12px;background:rgba(255,255,255,0.01);margin-bottom:14px}
+    .avatar{width:54px;height:54px;border-radius:12px;background:linear-gradient(135deg,var(--accent2),var(--accent1));display:flex;align-items:center;justify-content:center;font-weight:700}
+    .profile .meta{font-size:13px}
+    .profile .meta .role{color:var(--muted);font-size:12px}
+
+    .menu{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+    .menu button{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;border:none;background:transparent;color:inherit;cursor:pointer}
+    .menu button.active, .menu button:hover{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;transform:translateX(4px)}
+
+    .admin-extra{margin-top:14px;padding:12px;border-radius:12px;background:rgba(255,255,255,0.01)}
+    .admin-extra h4{margin:0 0 8px 0}
+    .admin-extra .list{display:flex;flex-direction:column;gap:8px}
+    .admin-extra .list button{padding:8px;border-radius:8px;border:none;background:transparent;color:var(--muted);cursor:pointer;text-align:left}
+
+    /* MAIN */
+    .main{flex:1;display:flex;flex-direction:column;gap:16px}
+    header.top{display:flex;justify-content:space-between;align-items:center}
+    .search{display:flex;gap:8px;align-items:center;background:var(--glass);padding:8px;border-radius:10px}
+    .search input{background:transparent;border:none;outline:none;color:inherit}
+    .top-actions{display:flex;gap:8px}
+    .btn{padding:8px 12px;border-radius:10px;border:none;background:rgba(255,255,255,0.03);color:inherit;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:white}
+
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.5)}
+    .card h3{margin:0 0 8px 0}
+
+    .wide{grid-column:1/-1}
+
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:10px;text-align:left;border-top:1px solid rgba(255,255,255,0.03)}
+    tbody tr:hover{background:linear-gradient(90deg, rgba(109,40,217,0.03), rgba(6,182,212,0.02))}
+
+    .layout-flex{display:flex;gap:12px}
+    .panel{flex:1}
+
+    /* responsive */
+    @media (max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.sidebar{display:none}.app{padding:12px}.app.mobile .sidebar{display:block;width:100%}}
+    @media (max-width:640px){.cards{grid-template-columns:1fr}.app{padding:8px}}
+
+    /* tiny helpers */
+    .muted{color:var(--muted);font-size:13px}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="logo-box">
+        <!-- user-provided logo: put pre-logo.png in same folder or assets/ -->
+        <img src="assets/pre-logo.png" alt="Prime University logo" onerror="this.style.display='none'" />
+        <div class="brand-title"> <strong>Prime University</strong> <span>65th-E CSE Group-B</span></div>
+      </div>
+
+      <div class="profile">
+        <div class="avatar">A</div>
+        <div class="meta">
+          <div style="font-weight:700">Administrator</div>
+          <div class="role muted">Super Admin</div>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Main menu">
+        <button data-view="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</button>
+        <button data-view="add"><i class="fas fa-user-plus"></i> Add Student Account</button>
+        <button data-view="results"><i class="fas fa-file-alt"></i> Results</button>
+        <button data-view="notices"><i class="fas fa-bullhorn"></i> Notices</button>
+        <button data-view="fees"><i class="fas fa-credit-card"></i> Fee Payment</button>
+        <button data-view="alumni"><i class="fas fa-user-graduate"></i> Alumni</button>
+      </nav>
+
+      <div class="admin-extra">
+        <h4>Admin Tools</h4>
+        <div class="list">
+          <button data-tool="manage-teachers"><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</button>
+          <button data-tool="course-settings"><i class="fas fa-cogs"></i> Course Settings</button>
+          <button data-tool="department"><i class="fas fa-university"></i> Department Info</button>
+          <button data-tool="attendance"><i class="fas fa-clock"></i> Attendance Monitor</button>
+          <button data-tool="reports"><i class="fas fa-chart-line"></i> Reports & Analytics</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="top">
+        <div class="search"><i class="fas fa-search"></i><input id="globalSearch" placeholder="Search by name or ID..." /></div>
+        <div class="top-actions">
+          <button class="btn" id="importSample">Import Sample</button>
+          <button class="btn primary" id="newStudent"><i class="fas fa-plus"></i> New Student</button>
+        </div>
+      </header>
+
+      <section id="content">
+        <!-- Dashboard view (default) -->
+        <div id="view-dashboard">
+          <div class="cards">
+            <div class="card">
+              <h3>Quick Stats</h3>
+              <div style="display:flex;gap:12px;align-items:center">
+                <div>
+                  <div class="big" id="totalCount">0</div>
+                  <div class="muted">Total Students</div>
+                </div>
+                <div>
+                  <div class="big" id="maleCount">0</div>
+                  <div class="muted">Male</div>
+                </div>
+                <div>
+                  <div class="big" id="femaleCount">0</div>
+                  <div class="muted">Female</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h3>Enrollment by Year</h3>
+              <canvas id="enrollChart" height="120"></canvas>
+            </div>
+
+            <div class="card wide">
+              <h3>Latest Students</h3>
+              <table id="studentsTable"><thead><tr><th>Name</th><th>ID</th><th>Year</th><th>GPA</th><th>Gender</th><th>Actions</th></tr></thead><tbody></tbody></table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Add Student view -->
+        <div id="view-add" style="display:none">
+          <div class="card">
+            <h3>Add / Edit Student</h3>
+            <form id="studentForm">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+                <input id="f_name" placeholder="Full name" required />
+                <input id="f_id" placeholder="Student ID e.g. S2025001" required />
+                <select id="f_year"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+                <input id="f_gpa" type="number" step="0.01" min="0" max="4" placeholder="GPA" />
+                <select id="f_gender"><option>Male</option><option>Female</option><option>Other</option></select>
+              </div>
+              <div style="margin-top:10px;display:flex;gap:8px">
+                <button type="button" class="btn" id="cancelEdit">Cancel</button>
+                <button type="submit" class="btn primary">Save Student</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Results view -->
+        <div id="view-results" style="display:none">
+          <div class="card">
+            <h3>Results</h3>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+              <select id="resStudentSelect"></select>
+              <input id="res_course" placeholder="Course" />
+              <input id="res_marks" placeholder="Marks" />
+              <button class="btn" id="addResBtn">Add</button>
+            </div>
+            <table id="resTable"><thead><tr><th>Course</th><th>Marks</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+
+        <!-- Notices view -->
+        <div id="view-notices" style="display:none">
+          <div class="card">
+            <h3>Notices</h3>
+            <div style="display:flex;gap:8px;margin-bottom:8px">
+              <input id="noticeText" placeholder="Write a notice..." />
+              <button class="btn" id="postNotice">Post</button>
+            </div>
+            <ul id="noticeList"></ul>
+          </div>
+        </div>
+
+        <!-- Fees view -->
+        <div id="view-fees" style="display:none">
+          <div class="card">
+            <h3>Fee Payment</h3>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+              <select id="feeStudentSelect"></select>
+              <input id="feeAmount" placeholder="Amount" />
+              <button class="btn" id="recordFeeBtn">Record</button>
+            </div>
+            <table id="feeTable"><thead><tr><th>Date</th><th>Student</th><th>Amount</th></tr></thead><tbody></tbody></table>
+          </div>
+        </div>
+
+        <!-- Alumni view -->
+        <div id="view-alumni" style="display:none">
+          <div class="card">
+            <h3>Alumni</h3>
+            <div id="alumniList"></div>
+          </div>
+        </div>
+
+        <!-- Admin Tools view (simple placeholders) -->
+        <div id="view-tools" style="display:none">
+          <div class="card">
+            <h3>Admin Tools</h3>
+            <div id="toolContent">Select a tool from the sidebar to see details.</div>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    /***** Portal core (single-file) *****/
+    (function(){
+      const KEY = 'prime_portal_sp_v1';
+      function seed(){
+        return {
+          students:[{id:'S2025001',name:'Afsana Rahman',year:1,gpa:3.80,gender:'Female'},{id:'S2025002',name:'Rafiq Hasan',year:2,gpa:3.20,gender:'Male'},{id:'S2025003',name:'Muna Akter',year:3,gpa:3.60,gender:'Female'}],
+          results:{},notices:[],fees:[],alumni:[]
+        };
+      }
+      function load(){ try{ const raw=localStorage.getItem(KEY); return raw?JSON.parse(raw):seed(); }catch(e){ return seed(); } }
+      function save(state){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){ console.error('save failed',e);} }
+
+      // expose portalReady promise
+      if(!window.portalReady){
+        let _resolve,_reject; window.portalReady = new Promise((res,rej)=>{_resolve=res;_reject=rej}); window.__resolvePortalReady=_resolve; window.__rejectPortalReady=_reject;
+      }
+
+      if(!window._portalState) window._portalState = load();
+      const state = window._portalState;
+
+      // attach helpers if absent
+      if(typeof window.getStudents !== 'function') window.getStudents = ()=> state.students || [];
+      if(typeof window.addStudent !== 'function') window.addStudent = (s)=>{ state.students = state.students || []; state.students.unshift(s); save(state); };
+      if(typeof window.updateStudent !== 'function') window.updateStudent = (id, data)=>{ const s = (state.students||[]).find(x=>x.id===id); if(s) Object.assign(s,data); save(state); };
+      if(typeof window.removeStudent !== 'function') window.removeStudent = (id)=>{ state.students = (state.students||[]).filter(x=>x.id!==id); save(state); };
+      if(typeof window.getResults !== 'function') window.getResults = (id)=> (state.results && state.results[id]) || [];
+      if(typeof window.addResult !== 'function') window.addResult = (id,r)=>{ state.results = state.results || {}; state.results[id]=state.results[id]||[]; state.results[id].push(r); save(state); };
+      if(typeof window.getNotices !== 'function') window.getNotices = ()=> state.notices || [];
+      if(typeof window.postNotice !== 'function') window.postNotice = (t)=>{ state.notices = state.notices || []; state.notices.push({text:t,date:new Date().toLocaleString()}); save(state); };
+      if(typeof window.recordFee !== 'function') window.recordFee = (f)=>{ state.fees = state.fees || []; state.fees.push({id:f.id,amount:f.amount,date:new Date().toLocaleString()}); save(state); };
+      if(typeof window.getFees !== 'function') window.getFees = ()=> state.fees || [];
+      if(typeof window.getAlumni !== 'function') window.getAlumni = ()=> state.alumni || [];
+      if(typeof window.markAlumni !== 'function') window.markAlumni = (id)=>{ const s = (state.students||[]).find(x=>x.id===id); if(s){ state.alumni = state.alumni || []; state.alumni.push(s); save(state); } };
+
+      // resolve ready
+      if(window.__resolvePortalReady){ window.__resolvePortalReady(state); delete window.__resolvePortalReady; delete window.__rejectPortalReady; }
+
+      // small UI helpers
+      function q(sel, ctx=document){ return ctx.querySelector(sel); }
+      function qa(sel, ctx=document){ return Array.from(ctx.querySelectorAll(sel)); }
+
+      // render functions
+      function renderDashboard(){
+        const students = window.getStudents();
+        q('#totalCount').textContent = students.length;
+        q('#maleCount').textContent = students.filter(s=>s.gender==='Male').length;
+        q('#femaleCount').textContent = students.filter(s=>s.gender==='Female').length;
+        // table
+        const tbody = q('#studentsTable tbody'); tbody.innerHTML=''; students.slice(0,50).forEach(s=>{
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${escapeHtml(s.name)}</td><td>${escapeHtml(s.id)}</td><td>${s.year}</td><td>${(typeof s.gpa==='number')?s.gpa.toFixed(2):s.gpa}</td><td>${s.gender}</td><td><button class='btn' data-edit='${s.id}'>Edit</button> <button class='btn' data-del='${s.id}'>Delete</button> <button class='btn' data-alumni='${s.id}'>Mark Alumni</button></td>`;
+          tbody.appendChild(tr);
+        });
+        // chart
+        try{
+          const ctx = q('#enrollChart'); if(ctx){ const counts=[1,2,3,4].map(y=>students.filter(s=>s.year==y).length);
+            if(window.__enrollChart) window.__enrollChart.destroy();
+            window.__enrollChart = new Chart(ctx,{type:'doughnut',data:{labels:['Year1','Year2','Year3','Year4'],datasets:[{data:counts}]},options:{plugins:{legend:{position:'bottom'}}}});
+          }
+        }catch(e){console.error(e)}
+      }
+
+      function renderResults(){ const sel = q('#resStudentSelect'); sel.innerHTML=''; (window.getStudents()||[]).forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=`${s.name} — ${s.id}`; sel.appendChild(o); }); sel.dispatchEvent(new Event('change')); }
+      function renderNotices(){ const ul = q('#noticeList'); ul.innerHTML=''; (window.getNotices()||[]).slice().reverse().forEach(n=>{ const li=document.createElement('li'); li.innerHTML=`<strong>${n.date}</strong> — ${escapeHtml(n.text)}`; ul.appendChild(li); }); }
+      function renderFees(){ const sel = q('#feeStudentSelect'); sel.innerHTML=''; (window.getStudents()||[]).forEach(s=>{ const o=document.createElement('option'); o.value=s.id; o.textContent=`${s.name} (${s.id})`; sel.appendChild(o); }); const tb=q('#feeTable tbody'); tb.innerHTML=''; (window.getFees()||[]).slice().reverse().forEach(f=>{ const tr=document.createElement('tr'); tr.innerHTML=`<td>${f.date}</td><td>${f.id}</td><td>${escapeHtml(f.amount)}</td>`; tb.appendChild(tr); }); }
+      function renderAlumni(){ const wrap = q('#alumniList'); wrap.innerHTML=''; const al = window.getAlumni()||[]; if(al.length===0){ wrap.innerHTML='<div class="muted">No alumni yet.</div>'; return;} al.forEach(a=>{ const d=document.createElement('div'); d.className='pill'; d.textContent=`${a.name} — ${a.id}`; wrap.appendChild(d); }); }
+
+      // utilities
+      function switchView(name){ qa('#content > div').forEach(d=>d.style.display='none'); const el = q('#view-'+name); if(el) el.style.display='block'; qa('.menu button').forEach(b=>b.classList.toggle('active', b.dataset.view===name)); }
+      function escapeHtml(s){ return (s+'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]); }
+
+      // init DOM events (after DOM ready)
+      document.addEventListener('DOMContentLoaded', ()=>{
+        // menu
+        qa('.menu button').forEach(btn=> btn.addEventListener('click', ()=>{ switchView(btn.dataset.view); if(btn.dataset.view==='dashboard') renderDashboard(); if(btn.dataset.view==='results') renderResults(); if(btn.dataset.view==='notices') renderNotices(); if(btn.dataset.view==='fees') renderFees(); if(btn.dataset.view==='alumni') renderAlumni(); }));
+
+        // admin tools
+        qa('.admin-extra .list button').forEach(b=> b.addEventListener('click', ()=>{ switchView('tools'); q('#toolContent').textContent = b.textContent + ' — (placeholder tool view)'; }));
+
+        // import sample
+        q('#importSample').addEventListener('click', ()=>{ if(!confirm('Import sample data? This will overwrite current data.')) return; window._portalState = seed(); save(window._portalState); location.reload(); });
+        q('#newStudent').addEventListener('click', ()=>{ switchView('add'); q('#f_name').focus(); });
+
+        // form submit
+        q('#studentForm').addEventListener('submit', (e)=>{ e.preventDefault(); const id = q('#f_id').value.trim(); const data = {name:q('#f_name').value.trim(), id:id, year:Number(q('#f_year').value), gpa: Number(q('#f_gpa').value)||0, gender:q('#f_gender').value}; if(!data.name||!data.id){ alert('Name and ID required'); return; }
+          const exists = (window.getStudents()||[]).some(s=>s.id===id);
+          if(exists){ window.updateStudent(id,data); } else { window.addStudent(data); }
+          renderDashboard(); renderResults(); renderNotices(); renderFees(); renderAlumni(); switchView('dashboard');
+        });
+
+        // table actions (edit/delete/alumni)
+        q('#studentsTable').addEventListener('click', (e)=>{
+          const edit = e.target.closest('[data-edit]'); if(edit){ const id = edit.dataset.edit; const s = window.getStudents().find(x=>x.id===id); if(s){ q('#f_name').value = s.name; q('#f_id').value = s.id; q('#f_year').value = s.year; q('#f_gpa').value = s.gpa; q('#f_gender').value = s.gender; switchView('add'); } return; }
+          const del = e.target.closest('[data-del]'); if(del){ const id = del.dataset.del; if(confirm('Delete student '+id+'?')){ window.removeStudent(id); renderDashboard(); renderResults(); renderFees(); renderAlumni(); } return; }
+          const al = e.target.closest('[data-alumni]'); if(al){ const id = al.dataset.alumni; if(confirm('Mark '+id+' as alumni?')){ window.markAlumni(id); renderAlumni(); } return; }
+        });
+
+        // Results page
+        q('#resStudentSelect').addEventListener('change', ()=>{ const id = q('#resStudentSelect').value; const rows = q('#resTable tbody'); rows.innerHTML=''; (window.getResults(id)||[]).forEach(r=>{ const tr = document.createElement('tr'); tr.innerHTML = `<td>${escapeHtml(r.course)}</td><td>${escapeHtml(r.marks)}</td>`; rows.appendChild(tr); }); });
+        q('#addResBtn').addEventListener('click', ()=>{ const id = q('#resStudentSelect').value; const c = q('#res_course').value.trim(); const m = q('#res_marks').value.trim(); if(!id||!c) return alert('Select student and enter course'); window.addResult(id,{course:c,marks:m}); q('#res_course').value=''; q('#res_marks').value=''; q('#resStudentSelect').dispatchEvent(new Event('change')); });
+
+        // Notices
+        q('#postNotice').addEventListener('click', ()=>{ const t = q('#noticeText').value.trim(); if(!t) return; window.postNotice(t); q('#noticeText').value=''; renderNotices(); });
+
+        // Fees
+        q('#recordFeeBtn').addEventListener('click', ()=>{ const id = q('#feeStudentSelect').value; const amt = q('#feeAmount').value.trim(); if(!id||!amt) return alert('Select student and enter amount'); window.recordFee({id,amount:amt}); q('#feeAmount').value=''; renderFees(); });
+
+        // initial render
+        renderDashboard(); renderResults(); renderNotices(); renderFees(); renderAlumni();
+
+        // search
+        q('#globalSearch').addEventListener('input', (e)=>{ const qv = e.target.value.trim().toLowerCase(); qa('#studentsTable tbody tr').forEach(tr=>{ const txt = tr.textContent.toLowerCase(); tr.style.display = txt.includes(qv)?'':'none'; }); });
+
+        // resolve portalReady (in case code attached after DOM loaded)
+        if(window.__resolvePortalReady){ window.__resolvePortalReady(window._portalState); delete window.__resolvePortalReady; }
+      });
+
+    })();
+  </script>
+</body>
+</html>
